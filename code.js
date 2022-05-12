@@ -1,41 +1,74 @@
-canvas = document.getElementById("myCanvas")
-ctx = canvas.getContext("2d")
+song1 = "";
+song2 = "";
+song1_status = ""
+song2_status = ""
+scoreLeftWrist = ""
+score = ""
 
-car1_width = 60
-car1_height= 20
-car1_x = 10
-car1_y = 10
-car1_image = "EA4.jpeg"
+leftWristX = 0
+leftWristY = 0
+rightWristX = 0
+rightWristY = 0
 
-car2_width = 60
-car2_height= 20
-car2_x = 10
-car2_y = 100
-car2_image = "EA4.jpeg"
- background_image = "EA RUNAWAY.jpeg"
+function gotPoses(results){
+    if(results.length > 0){
+        console.log(results)
+        scoreLeftWrist = results[0].pose.keypoints[9].score
+        console.log ("scoreLeftWrist = " + scoreLeftWrist)
 
- function Add(){
-     background_imgTag = new Image()
-     background_imgTag.onload = uploadBackground;
-     background_imgTag.src = background_image
+        leftWristX = results[0].pose.leftWrist.x
+        leftWristY = results[0].pose.leftWrist.y 
+        console.log("leftWristX" + leftWristX +"leftWristY" + leftWristY)
 
-     car1_imgTag = new Image()
-     car1_imgTag.onload = uploadcar1;
-     car1_imgTag.src = car1_image
+        rightWristX = results[0].pose.rightWrist.x
+        rightWristY = results[0].pose.rightWrist.y
+        console.log("rightWrist" + rightWristX + "rightWristY" + rightWristY)
 
-     car2_imgTag = new Image()
-     car2_imgTag.onload = uploadcar2;
-     car2_imgTag.src = car2_image
- }
+    }
+}
 
- function uploadBackground(){
-      ctx.drawImage(background_imgTag, 0, 0, canvas.width, canvas.height);
-     }
+function preload(){
+    song1 = loadSound("giorno theme.mp3")
+    song2 = loadSound("SecretSong.mp3")
+}
 
-     function uploadcar1(){
-        ctx.drawImage(car1_imgTag, 0, 0, canvas.width, canvas.height);
-     }
+function setup(){
+    canvas  = createCanvas(600, 500)
+    canvas.center()
 
-     function uploadcar2(){
-        ctx.drawImage(car2_imgTag, 0, 0, canvas.width, canvas.height);
-     } 
+    video = createCapture(VIDEO)
+    video.hide()
+
+    poseNet = ml5.poseNet(video, modelLoaded)
+    poseNet.on('pose', gotPoses)
+}
+
+function modelLoaded()
+{
+    console.log('All Systems Are a Go')
+}
+
+function draw(){
+    image(video, 0, 0, 600, 500)
+}
+
+function preload(){
+    song = loadSound('giorno theme.mp3')
+} 
+
+function play(){
+    song.play()
+    song.setVolume(1)
+    song.rate(1)
+}
+
+function stop(){
+    song.stop()
+}
+
+function draw(){
+    image(video, 0 ,0 ,600, 500)
+
+    song1_status = song1.isPlaying()
+    song2_status = song2.isPlaying() 
+}
